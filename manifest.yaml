@@ -13,6 +13,6 @@ connectors:
 - type: exporter
   executable: gcs-exporter
   protocols: [gcs]
-- type: store
+- type: storage
   executable: gcs-storage
   protocols: [gcs]
