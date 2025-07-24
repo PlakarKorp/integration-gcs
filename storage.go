@@ -67,6 +67,36 @@ func (g *gcsStore) put(prefix string, mac objects.MAC, rd io.Reader) (int64, err
 	return len, nil
 }
 
+func (g *gcsStore) getall(prefix string) (ret []objects.MAC, err error) {
+	prefix = g.realpath(prefix)
+	l := len(prefix) + 4 // /%02x/
+
+	query := &storage.Query{Prefix: prefix}
+	it := g.bucket.Objects(g.ctx, query)
+	for {
+		obj, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		if len(obj.Name) > l {
+			t, err := hex.DecodeString(obj.Name[l:])
+			if err != nil {
+				return nil, fmt.Errorf("decode %s key: %w", prefix, err)
+			}
+			if len(t) != 32 {
+				return nil, fmt.Errorf("invalid %s name: %s",
+					prefix, obj.Name)
+			}
+			ret = append(ret, objects.MAC(t))
+		}
+	}
+	return
+}
+
 func (g *gcsStore) Create(ctx context.Context, config []byte) error {
 	if err := g.connect(); err != nil {
 		return err
@@ -108,33 +138,8 @@ func (g *gcsStore) Location() string    { return "gcs://" + path.Join(g.bucketNa
 func (g *gcsStore) Mode() kstorage.Mode { return kstorage.ModeRead | kstorage.ModeWrite }
 func (g *gcsStore) Size() int64         { return -1 }
 
-func (g *gcsStore) GetStates() (states []objects.MAC, err error) {
-	prefix := g.realpath("states")
-	l := len(prefix) + 4 // /%02x/
-
-	query := &storage.Query{Prefix: prefix}
-	it := g.bucket.Objects(g.ctx, query)
-	for {
-		obj, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		if len(obj.Name) > l {
-			t, err := hex.DecodeString(obj.Name[l:])
-			if err != nil {
-				return nil, fmt.Errorf("decode state key: %w", err)
-			}
-			if len(t) != 32 {
-				return nil, fmt.Errorf("invalid state name: %s", obj.Name)
-			}
-			states = append(states, objects.MAC(t))
-		}
-	}
-	return
+func (g *gcsStore) GetStates() ([]objects.MAC, error) {
+	return g.getall("states")
 }
 
 func (g *gcsStore) PutState(mac objects.MAC, rd io.Reader) (int64, error) {
@@ -162,33 +167,8 @@ func (g *gcsStore) DeleteState(mac objects.MAC) error {
 	return g.bucket.Object(g.realpath(name)).Delete(g.ctx)
 }
 
-func (g *gcsStore) GetPackfiles() (packfiles []objects.MAC, err error) {
-	prefix := g.realpath("packfiles")
-	l := len(prefix) + 4 // /%02x/
-
-	query := &storage.Query{Prefix: prefix}
-	it := g.bucket.Objects(g.ctx, query)
-	for {
-		obj, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		if len(obj.Name) > l {
-			t, err := hex.DecodeString(obj.Name[l:])
-			if err != nil {
-				return nil, fmt.Errorf("decode packfile name: %w", err)
-			}
-			if len(t) != 32 {
-				return nil, fmt.Errorf("invalid packfile name: %s", obj.Name)
-			}
-			packfiles = append(packfiles, objects.MAC(t))
-		}
-	}
-	return
+func (g *gcsStore) GetPackfiles() ([]objects.MAC, error) {
+	return g.getall("packfiles")
 }
 
 func (g *gcsStore) PutPackfile(mac objects.MAC, rd io.Reader) (int64, error) {
@@ -232,33 +212,8 @@ func (g *gcsStore) DeletePackfile(mac objects.MAC) error {
 	return g.bucket.Object(g.realpath(name)).Delete(g.ctx)
 }
 
-func (g *gcsStore) GetLocks() (locks []objects.MAC, error error) {
-	prefix := g.realpath("locks")
-	l := len(prefix) + 4 // /%02x/
-
-	query := &storage.Query{Prefix: prefix}
-	it := g.bucket.Objects(g.ctx, query)
-	for {
-		obj, err := it.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		if len(obj.Name) > l {
-			t, err := hex.DecodeString(obj.Name[l:])
-			if err != nil {
-				return nil, fmt.Errorf("decode locks name: %w", err)
-			}
-			if len(t) != 32 {
-				return nil, fmt.Errorf("invalid packfile name: %s", obj.Name)
-			}
-			locks = append(locks, objects.MAC(t))
-		}
-	}
-	return
+func (g *gcsStore) GetLocks() ([]objects.MAC, error) {
+	return g.getall("locks")
 }
 
 func (g *gcsStore) PutLock(lockID objects.MAC, rd io.Reader) (int64, error) {
