@@ -50,6 +50,23 @@ func (g *gcsStore) connect() error {
 
 func (g *gcsStore) realpath(rel string) string { return path.Join(g.path, rel) }
 
+func (g *gcsStore) put(prefix string, mac objects.MAC, rd io.Reader) (int64, error) {
+	name := fmt.Sprintf("%s/%02x/%016x", prefix, mac[0], mac)
+	w := g.bucket.Object(g.realpath(name)).NewWriter(g.ctx)
+
+	len, err := io.Copy(w, rd)
+	if err != nil {
+		w.Close()
+		return 0, fmt.Errorf("failed to write object: %w", err)
+	}
+
+	if err := w.Close(); err != nil {
+		return 0, fmt.Errorf("failed to write object: %w", err)
+	}
+
+	return len, nil
+}
+
 func (g *gcsStore) Create(ctx context.Context, config []byte) error {
 	if err := g.connect(); err != nil {
 		return err
@@ -121,20 +138,7 @@ func (g *gcsStore) GetStates() (states []objects.MAC, err error) {
 }
 
 func (g *gcsStore) PutState(mac objects.MAC, rd io.Reader) (int64, error) {
-	name := fmt.Sprintf("states/%02x/%016x", mac[0], mac)
-	w := g.bucket.Object(g.realpath(name)).NewWriter(g.ctx)
-
-	len, err := io.Copy(w, rd)
-	if err != nil {
-		w.Close()
-		return 0, fmt.Errorf("failed to write object: %w", err)
-	}
-
-	if err := w.Close(); err != nil {
-		return 0, fmt.Errorf("failed to write object: %w", err)
-	}
-
-	return len, nil
+	return g.put("locks", mac, rd)
 }
 
 func (g *gcsStore) GetState(mac objects.MAC) (io.Reader, error) {
@@ -188,20 +192,7 @@ func (g *gcsStore) GetPackfiles() (packfiles []objects.MAC, err error) {
 }
 
 func (g *gcsStore) PutPackfile(mac objects.MAC, rd io.Reader) (int64, error) {
-	name := fmt.Sprintf("packfiles/%02x/%016x", mac[0], mac)
-	w := g.bucket.Object(g.realpath(name)).NewWriter(g.ctx)
-
-	len, err := io.Copy(w, rd)
-	if err != nil {
-		w.Close()
-		return 0, fmt.Errorf("failed to write object: %w", err)
-	}
-
-	if err := w.Close(); err != nil {
-		return 0, fmt.Errorf("failed to write object: %w", err)
-	}
-
-	return len, nil
+	return g.put("packfiles", mac, rd)
 }
 
 func (g *gcsStore) GetPackfile(mac objects.MAC) (io.Reader, error) {
@@ -271,20 +262,7 @@ func (g *gcsStore) GetLocks() (locks []objects.MAC, error error) {
 }
 
 func (g *gcsStore) PutLock(lockID objects.MAC, rd io.Reader) (int64, error) {
-	name := fmt.Sprintf("locks/%02x/%016x", lockID[0], lockID)
-	w := g.bucket.Object(g.realpath(name)).NewWriter(g.ctx)
-
-	len, err := io.Copy(w, rd)
-	if err != nil {
-		w.Close()
-		return 0, fmt.Errorf("failed to write object: %w", err)
-	}
-
-	if err := w.Close(); err != nil {
-		return 0, fmt.Errorf("failed to write object: %w", err)
-	}
-
-	return len, nil
+	return g.put("locks", lockID, rd)
 }
 
 func (g *gcsStore) GetLock(lockID objects.MAC) (io.Reader, error) {
