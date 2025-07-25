@@ -8,37 +8,85 @@ import (
 	"fmt"
 	"io"
 	"path"
+	"strconv"
 	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/PlakarKorp/kloset/objects"
 	kstorage "github.com/PlakarKorp/kloset/storage"
 	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
 
 type gcsStore struct {
 	ctx        context.Context
 	bucketName string
 	path       string
+	opts       []option.ClientOption
 
 	client *storage.Client
 	bucket *storage.BucketHandle
 }
 
-func NewStore(ctx context.Context, proto string, params map[string]string) (kstorage.Store, error) {
-	target := params["location"]
-	bucket, path, _ := strings.Cut(strings.TrimPrefix(target, proto+"://"), "/")
+func parse(params map[string]string, proto string) (string, string, []option.ClientOption, error) {
+	var (
+		opts   []option.ClientOption
+		bucket string
+		path   string
+	)
 
-	path = strings.Trim(path, "/")
+	for k, v := range params {
+		switch k {
+		case "credentials_file":
+			opts = append(opts, option.WithCredentialsFile(v))
+
+		case "credentials_json":
+			opts = append(opts, option.WithCredentialsJSON([]byte(v)))
+
+		case "endpoint":
+			opts = append(opts, option.WithEndpoint(v))
+
+		case "no_auth":
+			noauth, err := strconv.ParseBool(v)
+			if err != nil {
+				err = fmt.Errorf("unknown value for no_auth %q: %w", v, err)
+				return "", "", nil, err
+			}
+			if noauth {
+				opts = append(opts, option.WithoutAuthentication())
+			}
+
+		case "location":
+			bucket, path, _ = strings.Cut(strings.TrimPrefix(k, proto+"://"), "/")
+			path = strings.Trim(path, "/")
+
+		default:
+			return "", "", nil, fmt.Errorf("unknown option: %s", k)
+		}
+	}
+
+	// telemetry should be opt-in?
+	opts = append(opts, option.WithTelemetryDisabled())
+
+	return bucket, path, opts, nil
+}
+
+func NewStore(ctx context.Context, proto string, params map[string]string) (kstorage.Store, error) {
+	bucket, path, opts, err := parse(params, proto)
+	if err != nil {
+		return nil, err
+	}
+
 	return &gcsStore{
 		ctx:        ctx,
 		bucketName: bucket,
 		path:       path,
+		opts:       opts,
 	}, nil
 }
 
 func (g *gcsStore) connect() error {
-	client, err := storage.NewClient(g.ctx)
+	client, err := storage.NewClient(g.ctx, g.opts...)
 	if err != nil {
 		return err
 	}

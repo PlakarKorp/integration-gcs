@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"strings"
 	"path"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/PlakarKorp/kloset/objects"
@@ -21,13 +21,13 @@ type gcsExporter struct {
 	bucket *storage.BucketHandle
 }
 
-func NewExporter(ctx context.Context, opts *exporter.Options, proto string, params map[string]string) (exporter.Exporter, error) {
-	target := params["location"]
-	bucket, path, _ := strings.Cut(strings.TrimPrefix(target, proto+"://"), "/")
+func NewExporter(ctx context.Context, _ *exporter.Options, proto string, params map[string]string) (exporter.Exporter, error) {
+	bucket, path, opts, err := parse(params, proto)
+	if err != nil {
+		return nil, err
+	}
 
-	path = strings.Trim(path, "/")
-
-	client, err := storage.NewClient(ctx)
+	client, err := storage.NewClient(ctx, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create a GCS client: %w", err)
 	}
