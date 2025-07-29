@@ -69,7 +69,7 @@ func parse(params map[string]string, proto string) (string, string, []option.Cli
 	}
 
 	// telemetry should be opt-in?
-	opts = append(opts, option.WithTelemetryDisabled())
+	// opts = append(opts, option.WithTelemetryDisabled())
 
 	return bucket, path, opts, nil
 }
