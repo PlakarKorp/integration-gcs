@@ -60,6 +60,9 @@ func parse(params map[string]string, proto string) (string, string, []option.Cli
 			bucket, path, _ = strings.Cut(strings.TrimPrefix(k, proto+"://"), "/")
 			path = strings.Trim(path, "/")
 
+		case "passphrase":
+			continue
+
 		default:
 			return "", "", nil, fmt.Errorf("unknown option: %s", k)
 		}
