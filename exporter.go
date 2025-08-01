@@ -2,6 +2,7 @@ package gcs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"path"
@@ -58,6 +59,10 @@ func (g *gcsExporter) StoreFile(ctx context.Context, pathname string, fp io.Read
 
 func (g *gcsExporter) SetPermissions(ctx context.Context, pathname string, fileinfo *objects.FileInfo) error {
 	return nil
+}
+
+func (g *gcsExporter) CreateLink(ctx context.Context, oldname string, newname string, ltype exporter.LinkType) error {
+	return errors.ErrUnsupported
 }
 
 func (g *gcsExporter) Close(ctx context.Context) error {
