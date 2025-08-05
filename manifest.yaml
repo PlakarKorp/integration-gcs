@@ -4,7 +4,7 @@ description: Integration providing storage, import and export capabilities to an
 homepage: https://github.com/PlakarKorp/integration-gcs
 license: ISC
 api_version: 1.0.0
-version: 0.1.0
+version: 1.0.0
 connectors:
 - type: importer
   executable: gs-importer
