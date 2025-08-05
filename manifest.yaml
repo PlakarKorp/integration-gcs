@@ -1,9 +1,8 @@
-name: gs
-display_name: Google Cloud Storage Integration
-description: Store klosets, import and export from/to buckets hosted on Google Cloud Storage
-homepage: https://github.com/PlakarKorp/integration-gs
+name: gcs
+display_name: Google Cloud Storage
+description: Integration providing storage, import and export capabilities to and from/to buckets hosted on Google Cloud Storage.
+homepage: https://github.com/PlakarKorp/integration-gcs
 license: ISC
-tags: [bucket, gs, google]
 api_version: 1.0.0
 version: 0.1.0
 connectors:
