@@ -32,7 +32,7 @@ The supported configuration options are:
   for example
 
 
-## Example usage
+## Examples
 
 ```sh
 # back up a bucket
