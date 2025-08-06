@@ -23,10 +23,10 @@ The supported configuration options are:
 
 ```sh
 # back up a bucket
-$ plakar backup gcs://bucket_name
+$ plakar at /tmp/store backup gcs://bucket_name
 
 # restore the snapshot "abc" to a bucket
-$ plakar restore -to gcs://bucket_name abc
+$ plakar at /tmp/store restore -to gcs://bucket_name abc
 
 # create a kloset repository to store your backups on a bucket
 $ plakar at gcs://bucket_name create
