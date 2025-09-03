@@ -55,7 +55,7 @@ func parse(params map[string]string, proto string) (string, string, []option.Cli
 			}
 
 		case "location":
-			bucket, path, _ = strings.Cut(strings.TrimPrefix(k, proto+"://"), "/")
+			bucket, path, _ = strings.Cut(strings.TrimPrefix(v, proto+"://"), "/")
 			path = strings.Trim(path, "/")
 
 		default:
