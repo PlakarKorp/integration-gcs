@@ -18,7 +18,7 @@ import (
 )
 
 func init() {
-	kstorage.Register("gcs", 0, NewStore)
+	kstorage.Register("gs", 0, NewStore)
 }
 
 type gcsStore struct {

@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	importer.Register("gcs", 0, NewImporter)
+	importer.Register("gs", 0, NewImporter)
 }
 
 type gcsImporter struct {
@@ -45,7 +45,7 @@ func NewImporter(ctx context.Context, _ *importer.Options, proto string, params 
 func (g *gcsImporter) Scan(ctx context.Context) (<-chan *importer.ScanResult, error) {
 	client, err := storage.NewClient(ctx, g.opts...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create a GCS client: %w", err)
+		return nil, fmt.Errorf("failed to create a google storage client: %w", err)
 	}
 
 	g.client = client

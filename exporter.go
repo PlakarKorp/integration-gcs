@@ -14,7 +14,7 @@ import (
 )
 
 func init() {
-	exporter.Register("gcs", 0, NewExporter)
+	exporter.Register("gs", 0, NewExporter)
 }
 
 type gcsExporter struct {
@@ -33,7 +33,7 @@ func NewExporter(ctx context.Context, _ *exporter.Options, proto string, params 
 
 	client, err := storage.NewClient(ctx, opts...)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create a GCS client: %w", err)
+		return nil, fmt.Errorf("failed to create a google storage client: %w", err)
 	}
 
 	return &gcsExporter{
