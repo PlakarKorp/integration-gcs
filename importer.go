@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"path"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/PlakarKorp/kloset/objects"
@@ -88,6 +89,14 @@ func (g *gcsImporter) scan(ctx context.Context, results chan<- *importer.ScanRes
 			break
 		}
 
+		// DO NOT REMOVE THIS.
+		// This is needed to skip "directory" objects in GCS,
+		// which are just objects with names ending in "/" when created from their UI.
+		if strings.HasSuffix(obj.Name, "/") {
+			// skip "directory" objects
+			continue
+		}
+
 		fullpath := "/" + obj.Name
 
 		g.mkparents(results, path.Dir(fullpath))
@@ -107,10 +116,10 @@ func (g *gcsImporter) scan(ctx context.Context, results chan<- *importer.ScanRes
 }
 
 func (g *gcsImporter) Location(ctx context.Context) (string, error) {
-	return "gcs://" + path.Join(g.bucketName, g.path), nil
+	return "gs://" + path.Join(g.bucketName, g.path), nil
 }
 func (g *gcsImporter) Origin(ctx context.Context) (string, error) { return g.bucketName, nil }
-func (g *gcsImporter) Type(ctx context.Context) (string, error)   { return "gcs", nil }
+func (g *gcsImporter) Type(ctx context.Context) (string, error)   { return "gs", nil }
 func (g *gcsImporter) Root(ctx context.Context) (string, error)   { return g.base, nil }
 
 func (g *gcsImporter) Close(ctx context.Context) error {
