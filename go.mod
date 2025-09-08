@@ -1,11 +1,11 @@
 module github.com/PlakarKorp/integration-gcs
 
-go 1.24.0
+go 1.23.4
 
 require (
 	cloud.google.com/go/storage v1.55.0
-	github.com/PlakarKorp/go-kloset-sdk v1.0.0-rc.7
-	github.com/PlakarKorp/kloset v1.0.3
+	github.com/PlakarKorp/go-kloset-sdk v1.0.0
+	github.com/PlakarKorp/kloset v1.0.4
 	google.golang.org/api v0.235.0
 )
 
@@ -21,7 +21,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.51.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.51.0 // indirect
-	github.com/PlakarKorp/integration-grpc v1.0.10 // indirect
+	github.com/PlakarKorp/integration-grpc v1.0.13 // indirect
 	github.com/RaduBerinde/axisds v0.0.0-20250419182453-5135a0650657 // indirect
 	github.com/RaduBerinde/btreemap v0.0.0-20250419232817-bf0d809ae648 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -81,12 +81,12 @@ require (
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/crypto v0.41.0 // indirect
 	golang.org/x/exp v0.0.0-20250819193227-8b4c13bb791b // indirect
-	golang.org/x/mod v0.27.0 // indirect
+	golang.org/x/mod v0.28.0 // indirect
 	golang.org/x/net v0.43.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sync v0.16.0 // indirect
-	golang.org/x/sys v0.35.0 // indirect
-	golang.org/x/text v0.28.0 // indirect
+	golang.org/x/sync v0.17.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
 	google.golang.org/genproto v0.0.0-20250728155136-f173205681a0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250721164621-a45f3dfb1074 // indirect
