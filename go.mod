@@ -4,8 +4,8 @@ go 1.24.0
 
 require (
 	cloud.google.com/go/storage v1.55.0
-	github.com/PlakarKorp/go-kloset-sdk v1.0.1
-	github.com/PlakarKorp/kloset v1.0.5
+	github.com/PlakarKorp/go-kloset-sdk v1.0.2
+	github.com/PlakarKorp/kloset v1.0.7
 	google.golang.org/api v0.235.0
 )
 
@@ -21,7 +21,7 @@ require (
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.29.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.51.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.51.0 // indirect
-	github.com/PlakarKorp/integration-grpc v1.0.14 // indirect
+	github.com/PlakarKorp/integration-grpc v1.0.15 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cncf/xds/go v0.0.0-20250501225837-2ac532fd4443 // indirect
