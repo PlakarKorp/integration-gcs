@@ -198,7 +198,7 @@ func (g *gcsStore) GetStates(ctx context.Context) ([]objects.MAC, error) {
 }
 
 func (g *gcsStore) PutState(ctx context.Context, mac objects.MAC, rd io.Reader) (int64, error) {
-	return g.put(ctx, "locks", mac, rd)
+	return g.put(ctx, "states", mac, rd)
 }
 
 func (g *gcsStore) GetState(ctx context.Context, mac objects.MAC) (io.ReadCloser, error) {
