@@ -66,6 +66,9 @@ func parse(params map[string]string, proto string) (string, string, string, []op
 			bucket, path, _ = strings.Cut(strings.TrimPrefix(v, proto+"://"), "/")
 			path = strings.Trim(path, "/")
 
+		case "service_port":
+			break
+
 		default:
 			return "", "", "", nil, fmt.Errorf("unknown option: %s", k)
 		}
